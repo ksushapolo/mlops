@@ -1,8 +1,9 @@
-import argparse
 import pickle
 
+import hydra
 import pandas as pd
 from dvc.api import DVCFileSystem
+from omegaconf import DictConfig
 from sklearn.metrics import accuracy_score
 
 
@@ -32,27 +33,17 @@ def save_prediction(y_pred, prediction_path):
     y_pred_df.to_csv(prediction_path, index=False)
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument(
-        '--data_path', type=str, default='./irises_classification/dataset/val.csv'
-    )
-    parser.add_argument(
-        '--model_path', type=str, default='./irises_classification/models/model.pkl'
-    )
-    parser.add_argument(
-        '--prediction_path',
-        type=str,
-        default='./irises_classification/results/result.csv',
-    )
-    args = parser.parse_args()
-
-    X_val, y_val = get_data(args.data_path)
-    model = load_model(args.model_path)
+@hydra.main(version_base=None, config_path="../configs", config_name="config")
+def main(cfg: DictConfig) -> None:
+    X_val, y_val = get_data(cfg.infer.data_path)
+    model = load_model(cfg.infer.model_path)
 
     y_pred = model.predict(X_val)
     accuracy = accuracy_score(y_val, y_pred)
     print("Точность: {}".format(accuracy))
 
-    save_prediction(y_pred, args.prediction_path)
+    save_prediction(y_pred, cfg.infer.prediction_path)
+
+
+if __name__ == '__main__':
+    main()

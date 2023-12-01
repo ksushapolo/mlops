@@ -1,8 +1,9 @@
-import argparse
 import pickle
 
+import hydra
 import pandas as pd
 from dvc.api import DVCFileSystem
+from omegaconf import DictConfig
 from sklearn.linear_model import LogisticRegression
 
 
@@ -33,17 +34,12 @@ def save_model(model, model_path):
         pickle.dump(model, file)
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument(
-        '--data_path', type=str, default='./irises_classification/dataset/train.csv'
-    )
-    parser.add_argument(
-        '--model_path', type=str, default='./irises_classification/models/model.pkl'
-    )
-    args = parser.parse_args()
-
-    X_train, y_train = get_data(args.data_path)
+@hydra.main(version_base=None, config_path="../configs", config_name="config")
+def main(cfg: DictConfig) -> None:
+    X_train, y_train = get_data(cfg.train.data_path)
     model = train(X_train, y_train)
-    save_model(model, args.model_path)
+    save_model(model, cfg.train.model_path)
+
+
+if __name__ == '__main__':
+    main()
