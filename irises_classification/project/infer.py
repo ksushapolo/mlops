@@ -2,10 +2,15 @@ import argparse
 import pickle
 
 import pandas as pd
+from dvc.api import DVCFileSystem
 from sklearn.metrics import accuracy_score
 
 
 def get_data(data_path):
+    fs = DVCFileSystem("./")
+    fs.get(data_path, data_path)
+    fs.get(data_path, data_path)
+
     val_data = pd.read_csv(data_path)
 
     val_data = val_data.values

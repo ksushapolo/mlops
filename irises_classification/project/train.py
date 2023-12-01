@@ -2,10 +2,15 @@ import argparse
 import pickle
 
 import pandas as pd
+from dvc.api import DVCFileSystem
 from sklearn.linear_model import LogisticRegression
 
 
 def get_data(data_path):
+    fs = DVCFileSystem("./")
+    fs.get(data_path, data_path)
+    fs.get(data_path, data_path)
+
     train_data = pd.read_csv(data_path)
 
     train_data = train_data.values
