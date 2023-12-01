@@ -161,3 +161,6 @@ cython_debug/
 
 irises_classification/models/model.pkl
 irises_classification/results/result.csv
+
+mlruns*
+mlartifacts*

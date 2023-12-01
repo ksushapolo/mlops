@@ -14,17 +14,14 @@ def get_data(data_path):
 
     train_data = pd.read_csv(data_path)
 
-    train_data = train_data.values
-    X_train = train_data[:, :-1]
-    y_train = train_data[:, -1]
+    X_train = train_data[train_data.columns[train_data.columns != train_data.columns[-1]]]
+    y_train = train_data[[train_data.columns[-1]]]
 
     return X_train, y_train
 
 
-def train(X_train, y_train):
-    log_reg = LogisticRegression(
-        multi_class='multinomial', max_iter=500, solver='lbfgs', random_state=42
-    ).fit(X_train, y_train)
+def train(X_train, y_train, params):
+    log_reg = LogisticRegression(**params).fit(X_train, y_train)
 
     return log_reg
 
@@ -36,9 +33,9 @@ def save_model(model, model_path):
 
 @hydra.main(version_base=None, config_path="../configs", config_name="config")
 def main(cfg: DictConfig) -> None:
-    X_train, y_train = get_data(cfg.train.data_path)
-    model = train(X_train, y_train)
-    save_model(model, cfg.train.model_path)
+    X_train, y_train = get_data(cfg.train_params.data_path)
+    model = train(X_train, y_train, cfg.model_params)
+    save_model(model, cfg.train_params.model_path)
 
 
 if __name__ == '__main__':

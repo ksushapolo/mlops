@@ -8,11 +8,20 @@ hydra:
   run:
     dir: .
 
-train:
+model_params:
+  multi_class: multinomial
+  max_iter: 500
+  solver: lbfgs
+
+train_params:
   data_path: irises_classification/dataset/train.csv
   model_path: irises_classification/models/model.pkl
 
-infer:
+infer_params:
   data_path: irises_classification/dataset/val.csv
   model_path: irises_classification/models/model.pkl
   prediction_path: irises_classification/results/result.csv
+
+server_params:
+  uri: http://127.0.0.1:8080
+  exp_name: log_reg_default_params
